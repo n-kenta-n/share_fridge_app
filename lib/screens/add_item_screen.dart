@@ -22,6 +22,8 @@ class AddItemState extends ConsumerState<AddItemScreen> {
   String? _limitDate;
   String _displayDate = 'なし';
   SnackBar? mySnackBar;
+  static List<String> unitList = <String>['個', 'ｇ', '㎖', 'パック'];
+  String _unit = unitList.first;
 
   @override
   void dispose() {
@@ -73,12 +75,15 @@ class AddItemState extends ConsumerState<AddItemScreen> {
   void _addItem() async {
     if (_itemController.text == '' || _amount <= 0) return;
     final currentUser = ref.watch(currentUserProvider);
-    await ref.read(itemListProvider.notifier).addItem(
-      _itemController.text,
-      _amount,
-      _limitDate,
-      currentUser!,
-    );
+    await ref
+        .read(itemListProvider.notifier)
+        .addItem(
+          _itemController.text,
+          _amount,
+          _unit,
+          _limitDate,
+          currentUser!,
+        );
     setState(() {
       _displayDate = 'なし';
     });
@@ -144,9 +149,10 @@ class AddItemState extends ConsumerState<AddItemScreen> {
               margin: const EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.3,
+                    width: MediaQuery.of(context).size.width * 0.25,
                     child: TextFormField(
                       keyboardType: TextInputType.numberWithOptions(
                         decimal: true,
@@ -160,7 +166,27 @@ class AddItemState extends ConsumerState<AddItemScreen> {
                       controller: _amountController,
                     ),
                   ),
-                  Text('個', style: textTheme.bodyLarge),
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.25,
+                    child: DropdownButtonFormField(
+                      value: _unit,
+                      items:
+                          unitList.map<DropdownMenuItem<String>>((
+                            String value,
+                          ) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _unit = value!;
+                        });
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),

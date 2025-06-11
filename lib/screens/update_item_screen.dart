@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_fridge_app/modules/auth/current_user_provider.dart';
 import 'package:share_fridge_app/modules/items/item.dart';
-import 'package:share_fridge_app/modules/items/item_repository.dart';
 import 'package:share_fridge_app/widgets/keyboard_aware.dart';
 import 'package:intl/intl.dart';
 import '../modules/items/item_list_provider.dart';
@@ -25,11 +24,13 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
   String? _limitDate;
   String _displayDate = 'なし';
   SnackBar? mySnackBar;
+  static List<String> unitList = <String>['個', 'ｇ', '㎖', 'パック'];
+  String _unit = unitList.first;
 
   @override
   void initState() {
     super.initState();
-    _amountController.text = widget.item.amount.toString();  // 初期値をここで設定
+    _amountController.text = widget.item.amount.toString(); // 初期値をここで設定
     _setDisplayDate();
   }
 
@@ -92,15 +93,9 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
   void _updateItem() async {
     if (_amount <= 0) return;
     final currentUser = ref.watch(currentUserProvider);
-    await ref.read(itemListProvider.notifier).updateItem(
-      widget.item.id,
-      _amount,
-      _limitDate,
-      currentUser!
-    );
-    // final testItem = await ref.read(itemListProvider.notifier).testFetch(widget.item.id);
-    final testItem = await ItemRepository().testFetch(widget.item.id);
-    print('testItem --------------> $testItem');
+    await ref
+        .read(itemListProvider.notifier)
+        .updateItem(widget.item.id, _amount, _limitDate, currentUser!);
     setState(() {
       _setDisplayDate();
     });
@@ -154,15 +149,16 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
               // StatefulWidgetの場合、引数で渡された値を参照するにはwidgetを付ける
-              child: Text(widget.item.itemName),
+              child: Text(widget.item.itemName, style: textTheme.titleLarge),
             ),
             Container(
               margin: const EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.3,
+                    width: MediaQuery.of(context).size.width * 0.25,
                     child: TextFormField(
                       // initialValue: widget.item.amount.toString(),
                       keyboardType: TextInputType.numberWithOptions(
@@ -177,7 +173,27 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
                       controller: _amountController,
                     ),
                   ),
-                  Text('個', style: textTheme.bodyLarge),
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.25,
+                    child: DropdownButtonFormField(
+                      value: widget.item.unit,
+                      items:
+                          unitList.map<DropdownMenuItem<String>>((
+                            String value,
+                          ) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _unit = value!;
+                        });
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),

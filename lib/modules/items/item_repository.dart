@@ -5,6 +5,7 @@ class ItemRepository {
   Future<Item> add(
     String itemName,
     double amount,
+    String unit,
     String? limitDate,
     User user,
   ) async {
@@ -12,6 +13,7 @@ class ItemRepository {
         await Supabase.instance.client.from('items').insert({
           'item_name': itemName,
           'amount': amount,
+          'unit': unit,
           'limit_date': limitDate,
           'user_id': user.id,
         }).select();
@@ -20,6 +22,7 @@ class ItemRepository {
       'id': item['id'],
       'itemName': item['item_name'],
       'amount': item['amount'],
+      'unit': item['unit'],
       'limitDate': item['limit_date'],
       'userId': item['user_id'],
     });
@@ -39,6 +42,7 @@ class ItemRepository {
           (item) => Item.fromJson({
             'id': item['id'],
             'itemName': item['item_name'],
+            'unit': item['unit'],
             'amount': item['amount'],
             'limitDate': item['limit_date'],
             'userId': item['user_id'],
@@ -68,6 +72,7 @@ class ItemRepository {
       'id': item['id'],
       'itemName': item['item_name'],
       'amount': item['amount'],
+      'unit': item['unit'],
       'limitDate': item['limit_date'],
       'userId': item['user_id'],
     });
@@ -84,6 +89,7 @@ class ItemRepository {
       'id': item['id'],
       'itemName': item['item_name'],
       'amount': item['amount'],
+      'unit': item['unit'],
       'limitDate': item['limit_date'],
       'userId': item['user_id'],
     });

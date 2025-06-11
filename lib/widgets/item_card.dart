@@ -50,12 +50,13 @@ class ItemCard extends StatelessWidget {
               child: Text(item.itemName, style: textTheme.titleLarge),
             ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Text(
-                    '数量：${item.amount.toString()}',
-                    style: textTheme.titleMedium,
+                    '${item.amount.toString()} ${item.unit}',
+                    style: textTheme.titleLarge,
                   ),
                 ),
                 Padding(

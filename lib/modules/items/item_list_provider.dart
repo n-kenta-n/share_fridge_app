@@ -75,12 +75,14 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
   Future<void> addItem(
     String itemName,
     double amount,
+    String unit,
     String? limitDate,
     User user,
   ) async {
     Item newItem = await ItemRepository().add(
       itemName,
       amount,
+      unit,
       limitDate,
       user,
     ); // DBに追加
