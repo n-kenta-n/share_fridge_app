@@ -86,6 +86,7 @@ class AddItemState extends ConsumerState<AddItemScreen> {
         );
     setState(() {
       _displayDate = 'なし';
+      _unit = unitList.first;
     });
     _showDialog(_itemController.text);
     _itemController.clear();

@@ -101,7 +101,7 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
       _setDisplayDate();
     });
     _showDialog(widget.item.itemName);
-    _amountController.text = widget.item.amount.toString();
+    //_amountController.text = widget.item.amount.toString();
   }
 
   void _validation() {

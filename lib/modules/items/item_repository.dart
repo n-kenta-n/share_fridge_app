@@ -1,4 +1,5 @@
 import 'package:share_fridge_app/modules/items/item.dart';
+import 'package:share_fridge_app/modules/items/sort_type_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ItemRepository {
@@ -28,6 +29,51 @@ class ItemRepository {
     });
   }
 
+  Future<List<Item>> fetch(int page, int number, SortType sortType) async {
+    final start = number * (page - 1);
+    final end = start + number - 1;
+    PostgrestList items;
+    switch (sortType) {
+      case SortType.addAsc:
+        items = await Supabase.instance.client
+            .from('items')
+            .select('*')
+            .range(start, end)
+            .order('created_at', ascending: false);
+      case SortType.addDesc:
+        items = await Supabase.instance.client
+            .from('items')
+            .select('*')
+            .range(start, end)
+            .order('created_at', ascending: true);
+      case SortType.limitAsc:
+        items = await Supabase.instance.client
+            .from('items')
+            .select('*')
+            .range(start, end)
+            .order('limit_date', ascending: false);
+      case SortType.limitDesc:
+        items = await Supabase.instance.client
+            .from('items')
+            .select('*')
+            .range(start, end)
+            .order('limit_date', ascending: true);
+    }
+    return items
+        .map(
+          (item) => Item.fromJson({
+            'id': item['id'],
+            'itemName': item['item_name'],
+            'unit': item['unit'],
+            'amount': item['amount'],
+            'limitDate': item['limit_date'],
+            'userId': item['user_id'],
+          }),
+        )
+        .toList();
+  }
+
+  /*
   Future<List<Item>> fetch(int page, int number) async {
     final start = number * (page - 1);
     final end = start + number - 1;
@@ -50,6 +96,7 @@ class ItemRepository {
         )
         .toList();
   }
+  */
 
   Future<void> delete(int id) async {
     await Supabase.instance.client.from('items').delete().eq('id', id);
@@ -65,7 +112,11 @@ class ItemRepository {
     final response =
         await Supabase.instance.client
             .from('items')
-            .update({'amount': newAmount, 'unit': newUnit, 'limit_date': newLimitDate})
+            .update({
+              'amount': newAmount,
+              'unit': newUnit,
+              'limit_date': newLimitDate,
+            })
             .eq('id', id)
             .select();
     final item = response.first;
