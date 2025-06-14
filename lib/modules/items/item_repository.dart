@@ -58,32 +58,16 @@ class ItemRepository {
   Future<Item> update(
     int id,
     double newAmount,
+    String newUnit,
     String? newLimitDate,
     User user,
   ) async {
     final response =
         await Supabase.instance.client
             .from('items')
-            .update({'amount': newAmount, 'limit_date': newLimitDate})
+            .update({'amount': newAmount, 'unit': newUnit, 'limit_date': newLimitDate})
             .eq('id', id)
             .select();
-    final item = response.first;
-    return Item.fromJson({
-      'id': item['id'],
-      'itemName': item['item_name'],
-      'amount': item['amount'],
-      'unit': item['unit'],
-      'limitDate': item['limit_date'],
-      'userId': item['user_id'],
-    });
-  }
-
-  // テスト用
-  Future<Item> testFetch(int id) async {
-    final response = await Supabase.instance.client
-        .from('items')
-        .select()
-        .eq('id', id);
     final item = response.first;
     return Item.fromJson({
       'id': item['id'],

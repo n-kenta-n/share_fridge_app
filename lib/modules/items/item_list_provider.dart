@@ -4,38 +4,6 @@ import 'package:share_fridge_app/modules/items/item.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'item_repository.dart';
 
-/*
-final itemListProvider = NotifierProvider<ItemListStore, List<Item>>(
-  ItemListStore.new,
-);
-
-class ItemListStore extends Notifier<List<Item>> {
-  @override
-  List<Item> build() {
-    return [];
-  }
-
-  void add(Item item) {
-    state = [...state, item];
-  }
-
-  void remove(int id) {
-    state = state.where((item) => item.id != id).toList();
-  }
-
-  void update(Item updatedItem) {
-    state =
-        state
-            .map((item) => item.id == updatedItem.id ? updatedItem : item)
-            .toList();
-  }
-
-  void clear() {
-    state = [];
-  }
-}
-*/
-
 final itemListProvider = AsyncNotifierProvider<ItemListNotifier, List<Item>>(
   ItemListNotifier.new,
 );
@@ -101,6 +69,7 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
   Future<void> updateItem(
     int itemId,
     double newAmount,
+    String newUnit,
     String? newLimitDate,
     User user,
   ) async {
@@ -108,6 +77,7 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
     final updatedItem = await ItemRepository().update(
       itemId,
       newAmount,
+      newUnit,
       newLimitDate,
       user,
     );
@@ -118,11 +88,5 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
         }).toList();
 
     state = AsyncValue.data(updatedItems);
-  }
-
-  // テスト用
-  Future<Item> testFetch(int id) async {
-    final item = await ItemRepository().testFetch(id);
-    return item;
   }
 }

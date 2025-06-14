@@ -25,12 +25,13 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
   String _displayDate = 'なし';
   SnackBar? mySnackBar;
   static List<String> unitList = <String>['個', 'ｇ', '㎖', 'パック'];
-  String _unit = unitList.first;
+  String _unit = '';
 
   @override
   void initState() {
     super.initState();
     _amountController.text = widget.item.amount.toString(); // 初期値をここで設定
+    _unit = widget.item.unit;
     _setDisplayDate();
   }
 
@@ -95,7 +96,7 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
     final currentUser = ref.watch(currentUserProvider);
     await ref
         .read(itemListProvider.notifier)
-        .updateItem(widget.item.id, _amount, _limitDate, currentUser!);
+        .updateItem(widget.item.id, _amount, _unit, _limitDate, currentUser!);
     setState(() {
       _setDisplayDate();
     });
@@ -177,7 +178,7 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.25,
                     child: DropdownButtonFormField(
-                      value: widget.item.unit,
+                      value: _unit,
                       items:
                           unitList.map<DropdownMenuItem<String>>((
                             String value,
