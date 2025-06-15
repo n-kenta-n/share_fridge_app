@@ -3,6 +3,8 @@ import 'package:share_fridge_app/modules/items/item.dart';
 import 'package:intl/intl.dart';
 import 'package:share_fridge_app/screens/update_item_screen.dart';
 
+final DateFormat outputFormat = DateFormat('yyyy/MM/dd');
+
 class ItemCard extends StatelessWidget {
   const ItemCard({super.key, required this.item});
 
@@ -10,29 +12,26 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateFormat outputFormat = DateFormat('yyyy/MM/dd');
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      margin: const EdgeInsets.all(10.0),
+      margin: const EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 6),
       decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(20),
+        /*
         boxShadow: const [
           BoxShadow(
-            color: Colors.grey,
+            //color: Colors.grey,
             blurRadius: 10,
             spreadRadius: 1,
             offset: Offset(1, 1),
           ),
         ],
+        */
       ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 0,
-        ),
-        onPressed: () {
+      child: InkWell(
+        onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -42,36 +41,39 @@ class ItemCard extends StatelessWidget {
             ),
           );
         },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(7),
-              child: Text(item.itemName, style: textTheme.titleLarge),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    '${item.amount.toString()} ${item.unit}',
-                    style: textTheme.titleLarge,
+        child: Container(
+          padding: const EdgeInsets.all(7.5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(7),
+                child: Text(item.itemName, style: textTheme.titleLarge),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      '${item.amount.toString()} ${item.unit}',
+                      style: textTheme.titleLarge,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child:
-                      item.limitDate != null
-                          ? Text(
-                            '期限：${outputFormat.format(item.limitDate!)}',
-                            style: textTheme.titleMedium,
-                          )
-                          : Text('期限：なし', style: textTheme.titleMedium),
-                ),
-              ],
-            ),
-          ],
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child:
+                        item.limitDate != null
+                            ? Text(
+                              '期限：${outputFormat.format(item.limitDate!)}',
+                              style: textTheme.titleMedium,
+                            )
+                            : Text('期限：なし', style: textTheme.titleMedium),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
