@@ -55,10 +55,17 @@ class ItemCard extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child: Text(
-                      '${item.amount.toString()} ${item.unit}',
-                      style: textTheme.titleLarge,
-                    ),
+                    child:
+                        // 少数がない場合は整数表示
+                        item.amount == item.amount.toInt()
+                            ? Text(
+                              '${item.amount.toStringAsFixed(0)} ${item.unit}',
+                              style: textTheme.titleLarge,
+                            )
+                            : Text(
+                              '${item.amount.toString()} ${item.unit}',
+                              style: textTheme.titleLarge,
+                            ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
