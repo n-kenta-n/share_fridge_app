@@ -68,8 +68,8 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
     }
   }
 
-  // アイテムを登録した際に出るダイアログ
-  Future<void> _showDialog(String itemName) async {
+  // アイテムを登録する際に出るダイアログ
+  Future<void> _updateItemDialog(String itemName) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -100,7 +100,7 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
     setState(() {
       _setDisplayDate();
     });
-    _showDialog(widget.item.itemName);
+    _updateItemDialog(widget.item.itemName);
     //_amountController.text = widget.item.amount.toString();
   }
 
@@ -231,6 +231,16 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
                 }),
               ),
               child: const Text('更新', style: TextStyle(color: Colors.white)),
+            ),
+            // 余白
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                ref.read(itemListProvider.notifier).removeItem(widget.item.id);
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('削除', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
