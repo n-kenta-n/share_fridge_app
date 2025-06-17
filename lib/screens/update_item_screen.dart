@@ -201,9 +201,10 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
             Container(
               margin: const EdgeInsets.all(15),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('期限', style: textTheme.bodyLarge),
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.15),
                   TextButton(
                     onPressed: () => _selectDate(context),
                     style: TextButton.styleFrom(
@@ -214,6 +215,15 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
                       ),
                     ),
                     child: Text(_displayDate),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _displayDate = 'なし';
+                        _limitDate = null;
+                      });
+                    },
+                    icon: const Icon(Icons.close),
                   ),
                 ],
               ),
