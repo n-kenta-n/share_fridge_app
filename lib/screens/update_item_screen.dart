@@ -17,7 +17,8 @@ class UpdateItemScreen extends ConsumerStatefulWidget {
 }
 
 class UpdateItemState extends ConsumerState<UpdateItemScreen> {
-  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _intController = TextEditingController();
+  final TextEditingController _decimalController = TextEditingController();
   double _amount = 0;
   final DateTime _nowTime = DateTime.now();
   final DateFormat _outputFormat = DateFormat('yyyy/MM/dd');
@@ -30,7 +31,12 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
   @override
   void initState() {
     super.initState();
-    _amountController.text = widget.item.amount.toString(); // 初期値をここで設定
+    _intController.text = widget.item.amount.toString().split('.')[0];
+    if (widget.item.amount == widget.item.amount.toInt()) {
+      _decimalController.text = '0';
+    } else {
+      _decimalController.text = widget.item.amount.toString().split('.')[1];
+    }
     _unit = widget.item.unit;
     _setDisplayDate();
   }
@@ -47,7 +53,8 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
 
   @override
   void dispose() {
-    _amountController.dispose();
+    _intController.dispose();
+    _decimalController.dispose();
     super.dispose();
   }
 
@@ -101,18 +108,20 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
       _setDisplayDate();
     });
     _updateItemDialog(widget.item.itemName);
-    //_amountController.text = widget.item.amount.toString();
   }
 
   void _validation() {
-    if (_amountController.text == '') {
+    if (_intController.text == '') {
       mySnackBar = SnackBar(content: Text('数量を入力してください'));
       ScaffoldMessenger.of(context).showSnackBar(mySnackBar!);
-    } else if (_amountController.text.endsWith('.')) {
-      mySnackBar = SnackBar(content: Text('値が不正です'));
-      ScaffoldMessenger.of(context).showSnackBar(mySnackBar!);
     } else {
-      _amount = double.parse(_amountController.text);
+      if (_decimalController.text.isEmpty) {
+        _amount = double.parse(_intController.text);
+      } else {
+        _amount = double.parse(
+          '${_intController.text}.${_decimalController.text}',
+        );
+      }
       if (_amount <= 0) {
         mySnackBar = SnackBar(content: Text('数量には０より大きい値を入力してください'));
         ScaffoldMessenger.of(context).showSnackBar(mySnackBar!);
@@ -159,24 +168,37 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    width: MediaQuery.of(context).size.width * 0.15,
                     child: TextFormField(
-                      // initialValue: widget.item.amount.toString(),
                       keyboardType: TextInputType.numberWithOptions(
                         decimal: true,
                       ),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d(\d*|\d*\.\d*)$'), // 数字と小数点のみ許可
-                        ),
+                        LengthLimitingTextInputFormatter(4),
+                        FilteringTextInputFormatter.digitsOnly,
                       ],
-                      decoration: InputDecoration(labelText: '数量'),
-                      controller: _amountController,
+                      decoration: InputDecoration(labelText: '整数'),
+                      controller: _intController,
+                    ),
+                  ),
+                  Text(' . ', style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.15,
+                    child: TextFormField(
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(4),
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      decoration: InputDecoration(labelText: '小数'),
+                      controller: _decimalController,
                     ),
                   ),
                   SizedBox(width: MediaQuery.of(context).size.width * 0.1),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    width: MediaQuery.of(context).size.width * 0.2,
                     child: DropdownButtonFormField(
                       value: _unit,
                       items:
@@ -229,7 +251,7 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: _amountController.text == '' ? null : _validation,
+              onPressed: _intController.text == '' ? null : _validation,
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith<Color>((
                   states,
