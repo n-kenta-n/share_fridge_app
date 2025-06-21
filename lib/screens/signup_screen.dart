@@ -18,8 +18,7 @@ class SignupScreenState extends ConsumerState<SignupScreen> {
 
   void _signup() async {
     try {
-      final user = await AuthRepository().signup(_userName, _email, _password);
-      ref.read(currentUserProvider.notifier).setCurrentUser(user);
+      await AuthRepository().signUp(_userName, _email, _password);
       _showDialog('成功');
     } catch (e) {
       print('Error: $e');
@@ -53,7 +52,6 @@ class SignupScreenState extends ConsumerState<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
         title: const Text(

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_fridge_app/modules/fridges/current_fridge_provider.dart';
 import 'package:share_fridge_app/modules/items/item.dart';
 import 'package:share_fridge_app/modules/items/sort_type_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -22,18 +23,42 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
 
   Future<List<Item>> _fetchInitial() async {
     final sortType = ref.watch(sortTypeProvider);
+    final fridgeId = ref.watch(currentFridgeProvider);
+
+    if (fridgeId == null) {
+      // fridgeがまだ選ばれていないなら、ロード中にする
+      return [];
+    }
+
     _currentPage = 1;
     _hasMore = true;
-    final items = await _repository.fetch(_currentPage, 10, sortType);
+    final items = await _repository.fetch(
+      _currentPage,
+      10,
+      fridgeId,
+      sortType,
+    );
     return items;
   }
 
   Future<void> fetchNext() async {
     final sortType = ref.watch(sortTypeProvider);
+    final fridgeId = ref.watch(currentFridgeProvider);
+
+    if (fridgeId == null) {
+      // fridgeがまだ選ばれていないなら、ロード中にする
+      return;
+    }
+
     if (!_hasMore || _isFetching) return;
     _isFetching = true;
     _currentPage++;
-    final newItems = await _repository.fetch(_currentPage, 10, sortType);
+    final newItems = await _repository.fetch(
+      _currentPage,
+      10,
+      fridgeId,
+      sortType,
+    );
 
     if (newItems.isEmpty) {
       _hasMore = false;
@@ -49,6 +74,7 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
     String unit,
     String? limitDate,
     User user,
+    String fridgeId,
   ) async {
     Item newItem = await ItemRepository().add(
       itemName,
@@ -56,6 +82,7 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
       unit,
       limitDate,
       user,
+      fridgeId,
     ); // DBに追加
     final currentItems = state.value ?? [];
     state = AsyncValue.data([newItem, ...currentItems]);

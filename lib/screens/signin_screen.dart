@@ -4,22 +4,29 @@ import 'package:share_fridge_app/modules/auth/auth_repository.dart';
 import 'package:share_fridge_app/modules/auth/current_user_provider.dart';
 import 'package:share_fridge_app/widgets/keyboard_aware.dart';
 
-class SigninScreen extends ConsumerStatefulWidget {
-  const SigninScreen({super.key});
+import '../modules/fridges/current_fridge_provider.dart';
+
+class SignInScreen extends ConsumerStatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  SigninScreenState createState() => SigninScreenState();
+  SignInScreenState createState() => SignInScreenState();
 }
 
-class SigninScreenState extends ConsumerState<SigninScreen> {
+class SignInScreenState extends ConsumerState<SignInScreen> {
   String _email = "";
   String _password = "";
 
   // サインインを行うメソッド
-  void _signin() async {
+  void _signIn() async {
     try {
-      final user = await AuthRepository().signin(_email, _password);
+      final user = await AuthRepository().signIn(_email, _password);
+      if (user == null) {
+        _showDialog('失敗');
+        return;
+      }
       ref.read(currentUserProvider.notifier).setCurrentUser(user);
+      ref.read(currentFridgeProvider.notifier).setCurrentFridgeId(user.id);
     } catch (e) {
       print('Error: $e');
       _showDialog('失敗');
@@ -112,7 +119,7 @@ class SigninScreenState extends ConsumerState<SigninScreen> {
                         child: ElevatedButton(
                           onPressed:
                               _email.isNotEmpty && _password.isNotEmpty
-                                  ? _signin
+                                  ? _signIn
                                   : null,
                           style: ButtonStyle(
                             backgroundColor:

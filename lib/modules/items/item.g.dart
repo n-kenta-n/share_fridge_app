@@ -16,6 +16,7 @@ _Item _$ItemFromJson(Map<String, dynamic> json) => _Item(
       json['limitDate'] == null
           ? null
           : DateTime.parse(json['limitDate'] as String),
+  fridgeId: json['fridgeId'] as String,
 );
 
 Map<String, dynamic> _$ItemToJson(_Item instance) => <String, dynamic>{
@@ -25,4 +26,5 @@ Map<String, dynamic> _$ItemToJson(_Item instance) => <String, dynamic>{
   'amount': instance.amount,
   'unit': instance.unit,
   'limitDate': instance.limitDate?.toIso8601String(),
+  'fridgeId': instance.fridgeId,
 };

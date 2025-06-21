@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_fridge_app/modules/auth/current_user_provider.dart';
+import 'package:share_fridge_app/modules/fridges/current_fridge_provider.dart';
 import 'package:share_fridge_app/modules/items/item_list_provider.dart';
 import 'package:share_fridge_app/widgets/keyboard_aware.dart';
 import 'package:intl/intl.dart';
@@ -76,16 +77,18 @@ class AddItemState extends ConsumerState<AddItemScreen> {
 
   void _addItem() async {
     if (_itemController.text == '' || _amount <= 0) return;
-    final currentUser = ref.watch(currentUserProvider);
+    final currentUser = ref.read(currentUserProvider);
+    final fridgeId = ref.read(currentFridgeProvider);
     await ref
         .read(itemListProvider.notifier)
         .addItem(
-          _itemController.text,
-          _amount,
-          _unit,
-          _limitDate,
-          currentUser!,
-        );
+        _itemController.text,
+        _amount,
+        _unit,
+        _limitDate,
+        currentUser!,
+        fridgeId!
+    );
     setState(() {
       _displayDate = 'なし';
       _unit = unitList.first;

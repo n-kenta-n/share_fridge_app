@@ -8,7 +8,7 @@ class Header extends ConsumerWidget {
 
   void _handleMenuSelected(WidgetRef ref, int val) async {
     if (val == 1) {
-      await AuthRepository().signout();
+      await AuthRepository().signOut();
       ref.read(currentUserProvider.notifier).setCurrentUser(null);
     }
   }

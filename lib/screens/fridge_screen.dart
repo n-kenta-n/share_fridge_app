@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_fridge_app/modules/items/sort_type_provider.dart';
 import 'package:share_fridge_app/screens/add_item_screen.dart';
-import 'package:share_fridge_app/widgets/header.dart';
 import 'package:share_fridge_app/widgets/item_card.dart';
 import 'package:share_fridge_app/modules/items/item_list_provider.dart';
 
@@ -52,10 +51,6 @@ class FridgeScreenState extends ConsumerState<FridgeScreen> {
     final sortType = ref.watch(sortTypeProvider);
 
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: Header(),
-      ),
       body: Column(
         children: [
           SizedBox(
