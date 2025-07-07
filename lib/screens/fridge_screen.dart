@@ -9,10 +9,10 @@ class FridgeScreen extends ConsumerStatefulWidget {
   const FridgeScreen({super.key});
 
   @override
-  FridgeScreenState createState() => FridgeScreenState();
+  FridgeState createState() => FridgeState();
 }
 
-class FridgeScreenState extends ConsumerState<FridgeScreen> {
+class FridgeState extends ConsumerState<FridgeScreen> {
   final ScrollController _scrollController = ScrollController();
 
   @override

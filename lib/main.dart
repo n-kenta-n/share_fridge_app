@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_fridge_app/modules/fridges/current_fridge_provider.dart';
 import 'package:share_fridge_app/screens/root_screen.dart';
+import 'package:share_fridge_app/widgets/auth_gate.dart';
 import 'package:share_fridge_app/widgets/theme_data.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +28,6 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class MyAppState extends ConsumerState<MyApp> {
-  bool _initialized = false; // サインインセッションが残っているかどうかの判定用変数
 
   @override
   void initState() {
@@ -45,10 +45,6 @@ class MyAppState extends ConsumerState<MyApp> {
       await ref.read(currentFridgeProvider.notifier).setCurrentFridgeId(currentUser.id);
     } on AuthException catch (e) {
       print(e);
-    } finally {
-      setState(() {
-        _initialized = true;
-      });
     }
   }
 
@@ -82,7 +78,8 @@ class MyAppState extends ConsumerState<MyApp> {
         }
       },
       // サインインセッションが残っていれば RootScreen, 残っていなければ SignInScreen
-      home:
+      home: const AuthGate(),
+          /*
           _initialized
               ? Consumer(
                 builder: (context, ref, _) {
@@ -94,6 +91,7 @@ class MyAppState extends ConsumerState<MyApp> {
               : const Scaffold(
                 body: Center(child: CircularProgressIndicator()),
               ),
+      */
     );
   }
 }

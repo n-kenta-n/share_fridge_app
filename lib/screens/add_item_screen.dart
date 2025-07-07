@@ -39,7 +39,7 @@ class AddItemState extends ConsumerState<AddItemScreen> {
     final DateTime? picker = await showDatePicker(
       context: context,
       initialDate: _nowTime, // 最初に表示する日付
-      // firstDate: DateTime(_nowTime.day), // 選択できる日付の最小値
+      // 選択できる日付の最小値
       firstDate: DateTime(_nowTime.year, _nowTime.month, _nowTime.day),
       lastDate: DateTime(_nowTime.year + 5), // 選択できる日付の最大値
     );

@@ -86,31 +86,6 @@ class ItemRepository {
         .toList();
   }
 
-  /*
-  Future<List<Item>> fetch(int page, int number) async {
-    final start = number * (page - 1);
-    final end = start + number - 1;
-    final items = await Supabase.instance.client
-        .from('items')
-        .select('*')
-        .range(start, end)
-        .order('created_at', ascending: false);
-    // .order('id', ascending: true);
-    return items
-        .map(
-          (item) => Item.fromJson({
-            'id': item['id'],
-            'itemName': item['item_name'],
-            'unit': item['unit'],
-            'amount': item['amount'],
-            'limitDate': item['limit_date'],
-            'userId': item['user_id'],
-          }),
-        )
-        .toList();
-  }
-  */
-
   Future<void> delete(int id) async {
     await Supabase.instance.client.from('items').delete().eq('id', id);
   }

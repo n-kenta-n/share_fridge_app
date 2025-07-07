@@ -19,16 +19,6 @@ class ItemCard extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(20),
-        /*
-        boxShadow: const [
-          BoxShadow(
-            //color: Colors.grey,
-            blurRadius: 10,
-            spreadRadius: 1,
-            offset: Offset(1, 1),
-          ),
-        ],
-        */
       ),
       child: InkWell(
         onTap: () {

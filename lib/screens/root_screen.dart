@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_fridge_app/screens/fridge_screen.dart';
+import 'package:share_fridge_app/screens/send_request_screen.dart';
 import 'package:share_fridge_app/screens/setting_screen.dart';
-import 'package:share_fridge_app/screens/shared_fridge_screen.dart';
 import 'package:share_fridge_app/widgets/header.dart';
 
 class RootScreen extends ConsumerStatefulWidget {
   const RootScreen({super.key});
 
   @override
-  RootScreenState createState() => RootScreenState();
+  RootState createState() => RootState();
 }
 
-class RootScreenState extends ConsumerState<RootScreen> {
+class RootState extends ConsumerState<RootScreen> {
   int _currentIndex = 1;
 
   final List<Widget> _pages = const [
     SettingScreen(),
     FridgeScreen(),
-    SharedFridgeScreen(),
+    SendRequestScreen(),
   ];
 
   @override
@@ -43,7 +43,7 @@ class RootScreenState extends ConsumerState<RootScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'setting'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
-          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'list'),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'shared requests'),
         ],
       ),
     );

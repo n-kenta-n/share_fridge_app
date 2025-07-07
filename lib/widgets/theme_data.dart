@@ -8,8 +8,10 @@ ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: Colors.white,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
+      backgroundColor: Colors.black,
+      foregroundColor: Colors.white,
+      disabledBackgroundColor: Colors.grey,
+      disabledForegroundColor: Colors.white,
     ),
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -29,6 +31,8 @@ ThemeData darkTheme = ThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: Color(0xFF232323),
       foregroundColor: Colors.white,
+      disabledBackgroundColor: Colors.grey,
+      disabledForegroundColor: Colors.white,
     ),
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(

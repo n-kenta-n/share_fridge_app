@@ -25,10 +25,8 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
     final sortType = ref.watch(sortTypeProvider);
     final fridgeId = ref.watch(currentFridgeProvider);
 
-    if (fridgeId == null) {
+    if (fridgeId == null) return [];
       // fridgeがまだ選ばれていないなら、ロード中にする
-      return [];
-    }
 
     _currentPage = 1;
     _hasMore = true;
