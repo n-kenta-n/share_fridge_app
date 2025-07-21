@@ -42,7 +42,7 @@ class MyAppState extends ConsumerState<MyApp> {
       final currentUser = await AuthRepository().getCurrentUser();
       if (currentUser == null) return;
       ref.read(currentUserProvider.notifier).setCurrentUser(currentUser);
-      await ref.read(currentFridgeProvider.notifier).setCurrentFridgeId(currentUser.id);
+      ref.read(currentFridgeProvider.notifier).setMyFridgeId(currentUser.id);
     } on AuthException catch (e) {
       print(e);
     }

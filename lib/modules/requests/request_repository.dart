@@ -114,7 +114,7 @@ class RequestRepository {
 
     final fridge =
         await Supabase.instance.client
-            .from('prime_fridges')
+            .from('profiles')
             .select('fridge_id')
             .eq('user_id', currentUser.id)
             .maybeSingle();

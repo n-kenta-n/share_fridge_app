@@ -25,17 +25,12 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
     final sortType = ref.watch(sortTypeProvider);
     final fridgeId = ref.watch(currentFridgeProvider);
 
+    // fridgeがまだ選ばれていないなら、ロード中にする
     if (fridgeId == null) return [];
-      // fridgeがまだ選ばれていないなら、ロード中にする
 
     _currentPage = 1;
     _hasMore = true;
-    final items = await _repository.fetch(
-      _currentPage,
-      10,
-      fridgeId,
-      sortType,
-    );
+    final items = await _repository.fetch(_currentPage, 10, fridgeId, sortType);
     return items;
   }
 
@@ -43,10 +38,8 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
     final sortType = ref.watch(sortTypeProvider);
     final fridgeId = ref.watch(currentFridgeProvider);
 
-    if (fridgeId == null) {
-      // fridgeがまだ選ばれていないなら、ロード中にする
-      return;
-    }
+    // fridgeがまだ選ばれていないなら、ロード中にする
+    if (fridgeId == null) return;
 
     if (!_hasMore || _isFetching) return;
     _isFetching = true;

@@ -26,7 +26,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
         return;
       }
       ref.read(currentUserProvider.notifier).setCurrentUser(user);
-      ref.read(currentFridgeProvider.notifier).setCurrentFridgeId(user.id);
+      ref.read(currentFridgeProvider.notifier).setMyFridgeId(user.id);
     } catch (e) {
       print('Error: $e');
       _showDialog('失敗');

@@ -12,8 +12,12 @@ class CurrentFridgeStore extends Notifier<String?> {
     return null; // 初期化状態
   }
 
-  Future<void> setCurrentFridgeId(String userId) async {
-    final fridgeId = await FridgeRepository().get(userId);
+  Future<void> setMyFridgeId(String userId) async {
+    final fridgeId = await FridgeRepository().getMyFridge(userId);
+    state = fridgeId;
+  }
+
+  void setFridgeId(String fridgeId) {
     state = fridgeId;
   }
 }
