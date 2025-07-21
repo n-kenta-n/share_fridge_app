@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_fridge_app/modules/requests/request_list_provider.dart';
-import 'package:share_fridge_app/modules/requests/request_repository.dart';
 import 'package:share_fridge_app/modules/auth/current_user_provider.dart';
 import '../modules/requests/request.dart';
 
@@ -19,11 +18,13 @@ class AcceptBottomSheetState extends ConsumerState<AcceptBottomSheet> {
 
   Future<void> _acceptRequest(Request request) async {
     final currentUser = ref.read(currentUserProvider);
-    await RequestRepository().acceptRequest(request, currentUser!);
+    await ref
+        .read(receivedRequestsProvider.notifier)
+        .acceptRequest(request, currentUser!);
   }
 
   Future<void> _rejectRequest(Request request) async {
-    await RequestRepository().rejectRequest(request);
+    await ref.read(receivedRequestsProvider.notifier).rejectRequest(request);
   }
 
   @override
@@ -67,7 +68,6 @@ class AcceptBottomSheetState extends ConsumerState<AcceptBottomSheet> {
                   _selectedOption == 'accept'
                       ? _acceptRequest(widget.request)
                       : _rejectRequest(widget.request);
-                  ref.invalidate(requestListProvider); // Providerの強制的な更新
                   Navigator.pop(context);
                 },
                 child: Text('決定'),

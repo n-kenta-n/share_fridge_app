@@ -5,11 +5,12 @@ import 'accept_bottom_sheet.dart';
 
 final DateFormat outputFormat = DateFormat('yyyy/MM/dd');
 
-class RequestCard extends StatelessWidget {
-  const RequestCard({super.key, required this.request});
+class SentRequestCard extends StatelessWidget {
+  const SentRequestCard({super.key, required this.request});
 
   final Request request;
 
+  /*
   void _showMyBottomSheet(BuildContext context, Request request) {
     showModalBottomSheet(
       context: context,
@@ -19,6 +20,7 @@ class RequestCard extends StatelessWidget {
       builder: (_) => AcceptBottomSheet(request: request),
     );
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class RequestCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          _showMyBottomSheet(context, request);
+          // _showMyBottomSheet(context, request);
         },
         child: Container(
           padding: const EdgeInsets.all(7.5),
@@ -45,13 +47,13 @@ class RequestCard extends StatelessWidget {
                     (request.status == 'pending')
                         ? Text('承認待ち', style: textTheme.titleLarge)
                         : (request.status == 'accepted')
-                        ? Text('承認済み', style: textTheme.titleLarge)
-                        : Text('否認済み', style: textTheme.titleLarge),
+                        ? Text('承認されました', style: textTheme.titleLarge)
+                        : Text('否認されました', style: textTheme.titleLarge),
               ),
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: Text(
-                  'from: ${request.fromUserName}',
+                  'to: ${request.toUserEmail}',
                   style: textTheme.titleLarge,
                 ),
               ),

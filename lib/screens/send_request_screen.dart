@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_fridge_app/screens/request_list_screen.dart';
+import 'package:share_fridge_app/screens/received_requests_screen.dart';
+import 'package:share_fridge_app/screens/sent_requests_screen.dart';
 import 'package:share_fridge_app/widgets/keyboard_aware.dart';
 import '../modules/auth/current_user_provider.dart';
-import '../modules/requests/request_repository.dart';
+import '../modules/requests/request_list_provider.dart';
 
 class SendRequestScreen extends ConsumerStatefulWidget {
   const SendRequestScreen({super.key});
@@ -24,7 +25,7 @@ class SendRequestState extends ConsumerState<SendRequestScreen> {
   Future<void> _sendRequest(String toUserEmail) async {
     final user = ref.read(currentUserProvider);
     if (user == null) return;
-    bool isSuccess = await RequestRepository().sendRequest(user, toUserEmail);
+    bool isSuccess = await ref.read(sentRequestsProvider.notifier).sendRequest(user, toUserEmail);
     final resultText =
         isSuccess
             ? const Text('シェアリクエストを送りました')
@@ -68,7 +69,7 @@ class SendRequestState extends ConsumerState<SendRequestScreen> {
               icon: const Icon(Icons.check),
               onPressed: () async {
                 Navigator.of(context).pop();
-                await Future.delayed(const Duration(milliseconds: 200));
+                await Future.delayed(const Duration(milliseconds: 100));
                 _sendRequest(toUserEmail);
               },
             ),
@@ -90,50 +91,65 @@ class SendRequestState extends ConsumerState<SendRequestScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      body: KeyboardAware(
-        child: Center(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: '相手のEmail',
-                    // hintText: '相手のEmail',
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _toUserController,
+      body: Center(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: TextFormField(
+                decoration: InputDecoration(
+                  labelText: '相手のEmail',
+                  // hintText: '相手のEmail',
                 ),
+                keyboardType: TextInputType.emailAddress,
+                controller: _toUserController,
               ),
-              const SizedBox(height: 16.0),
-              ValueListenableBuilder<TextEditingValue>(
-                valueListenable: _toUserController,
-                builder: (context, value, child) {
-                  return ElevatedButton(
-                    onPressed:
-                        (value.text.isEmpty)
-                            ? null
-                            : () => _sendRequestDialog(value.text),
-                    child: const Text('シェアリクエストを送る'),
-                  );
-                },
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RequestListScreen(),
-                      fullscreenDialog: false,
-                    ),
-                  );
-                },
-                child: Text('届いたリクエスト一覧'),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16.0),
+            ValueListenableBuilder<TextEditingValue>(
+              valueListenable: _toUserController,
+              builder: (context, value, child) {
+                return ElevatedButton(
+                  onPressed:
+                      (value.text.isEmpty)
+                          ? null
+                          : () => _sendRequestDialog(value.text),
+                  child: const Text('シェアリクエストを送る'),
+                );
+              },
+            ),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SentRequestsScreen(),
+                        fullscreenDialog: false,
+                      ),
+                    );
+                  },
+                  child: Text('送ったリクエスト'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReceivedRequestsScreen(),
+                        fullscreenDialog: false,
+                      ),
+                    );
+                  },
+                  child: Text('届いたリクエスト'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

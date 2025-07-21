@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../modules/requests/request_list_provider.dart';
-import '../widgets/request_card.dart';
+import '../widgets/received_request_card.dart';
 
-class RequestListScreen extends ConsumerStatefulWidget {
-  const RequestListScreen({super.key});
+class ReceivedRequestsScreen extends ConsumerStatefulWidget {
+  const ReceivedRequestsScreen({super.key});
 
   @override
-  RequestListState createState() => RequestListState();
+  ReceivedRequestsState createState() => ReceivedRequestsState();
 }
 
-class RequestListState extends ConsumerState<RequestListScreen> {
+class ReceivedRequestsState extends ConsumerState<ReceivedRequestsScreen> {
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -28,13 +28,13 @@ class RequestListState extends ConsumerState<RequestListScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      ref.read(requestListProvider.notifier).fetchNext();
+      ref.read(receivedRequestsProvider.notifier).fetchNext();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final requestList = ref.watch(requestListProvider);
+    final requestList = ref.watch(receivedRequestsProvider);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -65,7 +65,7 @@ class RequestListState extends ConsumerState<RequestListScreen> {
                     itemCount: requests.length,
                     itemBuilder: (context, index) {
                       final request = requests[index];
-                      return RequestCard(request: request);
+                      return ReceivedRequestCard(request: request);
                     },
                   ),
             ),
