@@ -77,21 +77,7 @@ class MyAppState extends ConsumerState<MyApp> {
             );
         }
       },
-      // サインインセッションが残っていれば RootScreen, 残っていなければ SignInScreen
       home: const AuthGate(),
-          /*
-          _initialized
-              ? Consumer(
-                builder: (context, ref, _) {
-                  final currentUser = ref.watch(currentUserProvider);
-                  if (currentUser == null) return const SignInScreen();
-                  return const RootScreen();
-                },
-              )
-              : const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              ),
-      */
     );
   }
 }

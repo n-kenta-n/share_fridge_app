@@ -4,6 +4,7 @@ import 'package:share_fridge_app/modules/items/sort_type_provider.dart';
 import 'package:share_fridge_app/screens/add_item_screen.dart';
 import 'package:share_fridge_app/widgets/item_card.dart';
 import 'package:share_fridge_app/modules/items/item_list_provider.dart';
+import '../widgets/fridge_drop_down.dart';
 
 class FridgeScreen extends ConsumerStatefulWidget {
   const FridgeScreen({super.key});
@@ -53,22 +54,28 @@ class FridgeState extends ConsumerState<FridgeScreen> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(
-            child: DropdownButton<SortType>(
-              value: sortType,
-              items:
-                  SortType.values.map((type) {
-                    return DropdownMenuItem(
-                      value: type,
-                      child: Text(type.label),
-                    );
-                  }).toList(),
-              onChanged: (newValue) {
-                if (newValue != null) {
-                  ref.read(sortTypeProvider.notifier).set(newValue);
-                }
-              },
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(child: FridgeDropdown()),
+              SizedBox(
+                child: DropdownButton<SortType>(
+                  value: sortType,
+                  items:
+                      SortType.values.map((type) {
+                        return DropdownMenuItem(
+                          value: type,
+                          child: Text(type.label),
+                        );
+                      }).toList(),
+                  onChanged: (newValue) {
+                    if (newValue != null) {
+                      ref.read(sortTypeProvider.notifier).set(newValue);
+                    }
+                  },
+                ),
+              ),
+            ],
           ),
           Expanded(
             child: itemList.when(

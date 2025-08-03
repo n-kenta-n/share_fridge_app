@@ -9,7 +9,7 @@ final currentFridgeProvider = NotifierProvider<CurrentFridgeStore, String?>(
 class CurrentFridgeStore extends Notifier<String?> {
   @override
   String? build() {
-    return null; // 初期化状態
+    return null;
   }
 
   Future<void> setMyFridgeId(String userId) async {

@@ -1,7 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FridgeRepository {
-  Future<String?> getMyFridge(String userId) async {
+  Future<String> getMyFridge(String userId) async {
     final fridgeId =
         await Supabase.instance.client
             .from('profiles')
@@ -14,10 +14,10 @@ class FridgeRepository {
   Future<List<String>> getSharedFridges(String userId) async {
     final sharedFridges = await Supabase.instance.client
         .from('shared_fridges')
-        .select('fridge_id')
+        .select('shared_fridge_id')
         .eq('user_id', userId);
     return sharedFridges
-        .map((fridge) => fridge['fridge_id'] as String)
+        .map((fridge) => fridge['shared_fridge_id'] as String)
         .toList();
   }
 

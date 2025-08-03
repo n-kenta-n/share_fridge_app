@@ -1,8 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
+
   @override
-  Widget build(BuildContext context) =>
-      const Center(child: Text('ホーム画面の内容'));
+  Widget build(BuildContext context) {
+    return Center(child: Text('AIが献立を考えてくれる機能を実装予定'));
+  }
 }

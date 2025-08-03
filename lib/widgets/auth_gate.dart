@@ -4,6 +4,8 @@ import 'package:share_fridge_app/modules/auth/current_user_provider.dart';
 import 'package:share_fridge_app/screens/root_screen.dart';
 import 'package:share_fridge_app/screens/signin_screen.dart';
 
+// ユーザがログインしているかどうかをチェックし、
+// ログインしていなければサインイン画面に遷移させる
 class AuthGate extends ConsumerWidget {
   const AuthGate({super.key});
 
