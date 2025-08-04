@@ -15,7 +15,7 @@ class ItemCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      margin: const EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 6),
+      margin: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(20),
@@ -37,37 +37,32 @@ class ItemCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: const EdgeInsets.all(7),
-                child: Text(item.itemName, style: textTheme.titleLarge),
+                padding: const EdgeInsets.only(left: 3, right: 3, top: 3, bottom: 10),
+                child: Text(item.itemName, style: textTheme.bodyMedium),
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child:
-                        // 少数がない場合は整数表示
-                        item.amount == item.amount.toInt()
-                            ? Text(
-                              '${item.amount.toStringAsFixed(0)} ${item.unit}',
-                              style: textTheme.titleLarge,
-                            )
-                            : Text(
-                              '${item.amount.toString()} ${item.unit}',
-                              style: textTheme.titleLarge,
-                            ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child:
-                        item.limitDate != null
-                            ? Text(
-                              '期限：${outputFormat.format(item.limitDate!)}',
-                              style: textTheme.titleMedium,
-                            )
-                            : Text('期限：なし', style: textTheme.titleMedium),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(3),
+                child:
+                    // 少数がない場合は整数表示
+                    item.amount == item.amount.toInt()
+                        ? Text(
+                          '${item.amount.toStringAsFixed(0)} ${item.unit}',
+                          style: textTheme.bodySmall,
+                        )
+                        : Text(
+                          '${item.amount.toString()} ${item.unit}',
+                          style: textTheme.bodySmall,
+                        ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(3),
+                child:
+                    item.limitDate != null
+                        ? Text(
+                          '${outputFormat.format(item.limitDate!)} まで',
+                          style: textTheme.bodySmall,
+                        )
+                        : Text('期限なし', style: textTheme.bodySmall),
               ),
             ],
           ),

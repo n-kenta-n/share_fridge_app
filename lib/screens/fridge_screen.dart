@@ -82,7 +82,13 @@ class FridgeState extends ConsumerState<FridgeScreen> {
               loading: () => Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('Error: $e')),
               data:
-                  (items) => ListView.builder(
+                  (items) => GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 0,
+                      mainAxisSpacing: 0,
+                      childAspectRatio: 2
+                    ),
                     controller: _scrollController,
                     itemCount: items.length,
                     itemBuilder: (context, index) {
