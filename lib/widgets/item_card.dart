@@ -17,7 +17,6 @@ class ItemCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(20),
       ),
       child: InkWell(
@@ -31,40 +30,49 @@ class ItemCard extends StatelessWidget {
             ),
           );
         },
-        child: Container(
-          padding: const EdgeInsets.all(7.5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 3, right: 3, top: 3, bottom: 10),
-                child: Text(item.itemName, style: textTheme.bodyMedium),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(3),
-                child:
-                    // 少数がない場合は整数表示
-                    item.amount == item.amount.toInt()
-                        ? Text(
-                          '${item.amount.toStringAsFixed(0)} ${item.unit}',
-                          style: textTheme.bodySmall,
-                        )
-                        : Text(
-                          '${item.amount.toString()} ${item.unit}',
-                          style: textTheme.bodySmall,
-                        ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(3),
-                child:
-                    item.limitDate != null
-                        ? Text(
-                          '${outputFormat.format(item.limitDate!)} まで',
-                          style: textTheme.bodySmall,
-                        )
-                        : Text('期限なし', style: textTheme.bodySmall),
-              ),
-            ],
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.all(7.5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 3,
+                    right: 3,
+                    top: 3,
+                    bottom: 10,
+                  ),
+                  child: Text(item.itemName, style: textTheme.bodyMedium),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(3),
+                  child:
+                      // 少数がない場合は整数表示
+                      item.amount == item.amount.toInt()
+                          ? Text(
+                            '${item.amount.toStringAsFixed(0)} ${item.unit}',
+                            style: textTheme.bodySmall,
+                          )
+                          : Text(
+                            '${item.amount.toString()} ${item.unit}',
+                            style: textTheme.bodySmall,
+                          ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(3),
+                  child:
+                      item.limitDate != null
+                          ? Text(
+                            '${outputFormat.format(item.limitDate!)} まで',
+                            style: textTheme.bodySmall,
+                          )
+                          : Text('期限なし', style: textTheme.bodySmall),
+                ),
+              ],
+            ),
           ),
         ),
       ),

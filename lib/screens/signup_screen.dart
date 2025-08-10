@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_fridge_app/modules/auth/auth_repository.dart';
-import 'package:share_fridge_app/modules/auth/current_user_provider.dart';
 import 'package:share_fridge_app/widgets/keyboard_aware.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
@@ -21,7 +20,6 @@ class SignupScreenState extends ConsumerState<SignupScreen> {
       await AuthRepository().signUp(_userName, _email, _password);
       _showDialog('成功');
     } catch (e) {
-      print('Error: $e');
       _showDialog('失敗');
     }
   }
@@ -80,15 +78,11 @@ class SignupScreenState extends ConsumerState<SignupScreen> {
                         style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.bold,
-                          // color: Colors.black,
                         ),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Username',
-                          hintText: 'Enter your username',
-                        ),
+                        decoration: InputDecoration(labelText: 'Username'),
                         onChanged:
                             (val) => setState(() {
                               _userName = val;
@@ -96,10 +90,7 @@ class SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          hintText: 'Enter your email',
-                        ),
+                        decoration: InputDecoration(labelText: 'Email'),
                         keyboardType: TextInputType.emailAddress,
                         onChanged:
                             (val) => setState(() {
@@ -108,10 +99,7 @@ class SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          hintText: 'Enter your password',
-                        ),
+                        decoration: InputDecoration(labelText: 'Password'),
                         obscureText: true,
                         onChanged:
                             (val) => setState(() {
@@ -128,21 +116,7 @@ class SignupScreenState extends ConsumerState<SignupScreen> {
                                       _password.isNotEmpty
                                   ? _signup
                                   : null,
-                          style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.resolveWith<Color>((
-                                  states,
-                                ) {
-                                  if (states.contains(WidgetState.disabled)) {
-                                    return Colors.grey;
-                                  }
-                                  return Colors.black;
-                                }),
-                          ),
-                          child: const Text(
-                            'Sign Up',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          child: const Text('Sign Up'),
                         ),
                       ),
                     ],

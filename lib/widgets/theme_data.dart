@@ -1,43 +1,52 @@
 import 'package:flutter/material.dart';
 
-// ライトモードのテーマ
+// ライトテーマ
 ThemeData lightTheme = ThemeData(
-  brightness: Brightness.light,
-  colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.light),
-  appBarTheme: AppBarTheme(backgroundColor: Color(0xFF000000)),
-  scaffoldBackgroundColor: Colors.white,
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.black,
-      foregroundColor: Colors.white,
-      disabledBackgroundColor: Colors.grey,
-      disabledForegroundColor: Colors.white,
-    ),
+  useMaterial3: true,
+  colorScheme: const ColorScheme.light().copyWith(
+    surface: Color(0xFFFFFFFF), // 基本の背景色
+    onSurface: Colors.black, // テキストの色
+    primary: Color(0xFF01AE9A), // progress circleとか
   ),
-  floatingActionButtonTheme: FloatingActionButtonThemeData(
+  appBarTheme: const AppBarTheme(
     backgroundColor: Colors.black,
     foregroundColor: Colors.white,
   ),
-  textTheme: const TextTheme(bodyLarge: TextStyle(color: Colors.black)),
+  scaffoldBackgroundColor: Color(0xFFF4F4F4),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
+      disabledBackgroundColor: Colors.grey,
+      disabledForegroundColor: Colors.black,
+    ),
+  ),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.black,
+  ),
 );
 
-// ダークモードのテーマ
+// ダークテーマ
 ThemeData darkTheme = ThemeData(
-  brightness: Brightness.dark,
-  colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark),
-  appBarTheme: AppBarTheme(backgroundColor: Color(0xFF000000)),
+  colorScheme: const ColorScheme.dark().copyWith(
+    surface: Color(0xFF232323), // 基本の背景色
+    onSurface: Colors.white, // テキストの色
+    primary: Color(0xFF0DDDA6), // progress circleとか
+  ),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Colors.black,
+    foregroundColor: Colors.white,
+  ),
   scaffoldBackgroundColor: Color(0xFF303030),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: Color(0xFF232323),
       foregroundColor: Colors.white,
-      disabledBackgroundColor: Colors.grey,
-      disabledForegroundColor: Colors.white,
     ),
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: Colors.black,
+    backgroundColor: Color(0xFF232323),
     foregroundColor: Colors.white,
   ),
-  textTheme: const TextTheme(bodyLarge: TextStyle(color: Colors.white)),
 );

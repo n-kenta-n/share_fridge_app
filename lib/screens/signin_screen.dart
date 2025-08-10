@@ -28,7 +28,6 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
       ref.read(currentUserProvider.notifier).setCurrentUser(user);
       ref.read(currentFridgeProvider.notifier).setMyFridgeId(user.id);
     } catch (e) {
-      print('Error: $e');
       _showDialog('失敗');
     }
   }
@@ -91,10 +90,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          hintText: 'Enter your email',
-                        ),
+                        decoration: InputDecoration(labelText: 'Email'),
                         keyboardType: TextInputType.emailAddress,
                         onChanged:
                             (val) => setState(() {
@@ -103,10 +99,7 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          hintText: 'Enter your password',
-                        ),
+                        decoration: InputDecoration(labelText: 'Password'),
                         obscureText: true,
                         onChanged:
                             (val) => setState(() {
@@ -121,26 +114,13 @@ class SignInScreenState extends ConsumerState<SignInScreen> {
                               _email.isNotEmpty && _password.isNotEmpty
                                   ? _signIn
                                   : null,
-                          style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.resolveWith<Color>((
-                                  states,
-                                ) {
-                                  if (states.contains(WidgetState.disabled)) {
-                                    return Colors.grey;
-                                  }
-                                  return Colors.black;
-                                }),
-                          ),
-                          child: const Text(
-                            'Sign In',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          child: const Text('Sign In'),
                         ),
                       ),
                       TextButton(
                         style: TextButton.styleFrom(
-                          foregroundColor: Colors.blue,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.primary,
                           textStyle: const TextStyle(
                             decoration: TextDecoration.underline,
                           ),

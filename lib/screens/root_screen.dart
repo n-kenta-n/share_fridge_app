@@ -39,7 +39,7 @@ class RootState extends ConsumerState<RootScreen> {
             _currentIndex = index;
           });
         },
-        fixedColor: Colors.blue,
+        fixedColor: Theme.of(context).colorScheme.primary,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'setting'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),

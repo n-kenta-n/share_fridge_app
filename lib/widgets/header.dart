@@ -28,7 +28,7 @@ class Header extends ConsumerWidget {
       surfaceTintColor: Colors.transparent,
       actions: [
         PopupMenuButton<int>(
-          icon: const Icon(Icons.menu, color: Colors.white),
+          icon: const Icon(Icons.menu),
           itemBuilder:
               (context) => [
                 PopupMenuItem<int>(
@@ -38,12 +38,14 @@ class Header extends ConsumerWidget {
                     subtitle: Text(currentUser.email!),
                   ),
                 ),
-                const PopupMenuItem<int>(
+                PopupMenuItem<int>(
                   value: 1,
                   child: ListTile(
                     title: Text(
                       "Sign Out",
-                      style: TextStyle(color: Colors.blue),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
                   ),
                 ),
