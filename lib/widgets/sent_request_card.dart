@@ -30,19 +30,19 @@ class SentRequestCard extends StatelessWidget {
       margin: const EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 6),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
         onTap: () {
           // _showMyBottomSheet(context, request);
         },
         child: Container(
-          padding: const EdgeInsets.all(7.5),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: const EdgeInsets.all(7),
+                padding: const EdgeInsets.all(8),
                 child:
                     (request.status == 'pending')
                         ? Text('承認待ち', style: textTheme.titleLarge)
@@ -51,7 +51,7 @@ class SentRequestCard extends StatelessWidget {
                         : Text('否認されました', style: textTheme.titleLarge),
               ),
               Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 child: Text(
                   'to: ${request.toUserEmail}',
                   style: textTheme.titleLarge,

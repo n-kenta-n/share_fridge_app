@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_fridge_app/modules/auth/current_user_provider.dart';
 import 'package:share_fridge_app/modules/fridges/current_fridge_provider.dart';
 import 'package:share_fridge_app/modules/items/item_list_provider.dart';
-import 'package:share_fridge_app/widgets/keyboard_aware.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
+
+import '../widgets/pick_image_sheet.dart';
 
 class AddItemScreen extends ConsumerStatefulWidget {
   const AddItemScreen({super.key});
@@ -26,6 +28,7 @@ class AddItemState extends ConsumerState<AddItemScreen> {
   SnackBar? mySnackBar;
   static List<String> unitList = <String>['個', 'ｇ', '㎖', 'パック'];
   String _unit = unitList.first;
+  File? _selectedImage;
 
   @override
   void dispose() {
@@ -77,26 +80,54 @@ class AddItemState extends ConsumerState<AddItemScreen> {
 
   void _addItem() async {
     if (_itemController.text == '' || _amount <= 0) return;
-    final currentUser = ref.read(currentUserProvider);
-    final fridgeId = ref.read(currentFridgeProvider);
-    await ref
-        .read(itemListProvider.notifier)
-        .addItem(
-        _itemController.text,
-        _amount,
-        _unit,
-        _limitDate,
-        currentUser!,
-        fridgeId!
+
+    // 完了ダイアログが表示されるまでローディングダイアログを表示
+    showDialog(
+      context: context,
+      barrierDismissible: false, // タップで閉じられない
+      builder: (context) {
+        return const Center(child: CircularProgressIndicator());
+      },
     );
-    setState(() {
-      _displayDate = 'なし';
-      _unit = unitList.first;
-    });
-    _addItemDialog(_itemController.text);
-    _itemController.clear();
-    _intController.clear();
-    _decimalController.clear();
+
+    try {
+      final currentUser = ref.read(currentUserProvider);
+      final fridgeId = ref.read(currentFridgeProvider);
+
+      await ref
+          .read(itemListProvider.notifier)
+          .addItem(
+            _itemController.text,
+            _amount,
+            _unit,
+            _limitDate,
+            currentUser!,
+            fridgeId!,
+            _selectedImage,
+          );
+
+      // 非同期処理の後にmountedを確認
+      // awaitで待っている間にStatefulWidgetが破棄される可能性があり
+      // 破棄された後にcontextを使うとクラッシュする恐れがある
+      if (!mounted) return;
+
+      setState(() {
+        _displayDate = 'なし';
+        _unit = unitList.first;
+        _selectedImage = null;
+      });
+      // ローディングダイアログを閉じる
+      Navigator.of(context).pop();
+      _addItemDialog(_itemController.text);
+      _itemController.clear();
+      _intController.clear();
+      _decimalController.clear();
+    } catch (e) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('食材の追加に失敗しました: $e')));
+    }
   }
 
   void _validation() {
@@ -138,112 +169,141 @@ class AddItemState extends ConsumerState<AddItemScreen> {
                 Navigator.of(context).pop();
               },
               icon: const Icon(Icons.close),
-              color: Colors.white,
             ),
           ],
         ),
       ),
-      body: KeyboardAware(
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            // 余白
-            SizedBox(height: 20),
+            const SizedBox(height: 32),
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: InkWell(
+                onTap: () async {
+                  final picked = await PickImageSheet.show(context);
+                  setState(() {
+                    _selectedImage = picked;
+                  });
+                },
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    child:
+                        _selectedImage != null
+                            ? Image.file(_selectedImage!)
+                            : const Center(child: Text('画像が選択されていません')),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _selectedImage = null;
+                });
+              },
+              child: const Text('画像をクリア'),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.7,
               child: TextFormField(
                 decoration: InputDecoration(labelText: '食材'),
                 controller: _itemController,
+                inputFormatters: [LengthLimitingTextInputFormatter(30)],
               ),
             ),
-            Container(
-              margin: const EdgeInsets.all(20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.15,
-                    child: TextFormField(
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(4),
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      decoration: InputDecoration(labelText: '整数'),
-                      controller: _intController,
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  child: TextFormField(
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
                     ),
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(4),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    decoration: InputDecoration(labelText: '整数'),
+                    controller: _intController,
                   ),
-                  Text(' . ', style: TextStyle(fontWeight: FontWeight.bold)),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.15,
-                    child: TextFormField(
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(4),
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      decoration: InputDecoration(labelText: '小数'),
-                      controller: _decimalController,
+                ),
+                Text(' . ', style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  child: TextFormField(
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
                     ),
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(4),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    decoration: InputDecoration(labelText: '小数'),
+                    controller: _decimalController,
                   ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.2,
-                    child: DropdownButtonFormField(
-                      value: _unit,
-                      items:
-                          unitList.map<DropdownMenuItem<String>>((
-                            String value,
-                          ) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          _unit = value!;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('期限', style: textTheme.bodyLarge),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.15),
-                  TextButton(
-                    onPressed: () => _selectDate(context),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: Colors.blue),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                    child: Text(_displayDate, style: textTheme.bodyLarge),
-                  ),
-                  IconButton(
-                    onPressed: () {
+                ),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  child: DropdownButtonFormField(
+                    value: _unit,
+                    items:
+                        unitList.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                    onChanged: (String? value) {
                       setState(() {
-                        _displayDate = 'なし';
-                        _limitDate = null;
+                        _unit = value!;
                       });
                     },
-                    icon: const Icon(Icons.close),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('期限', style: textTheme.bodyLarge),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.15),
+                TextButton(
+                  onPressed: () => _selectDate(context),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  child: Text(_displayDate, style: textTheme.bodyLarge),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _displayDate = 'なし';
+                      _limitDate = null;
+                    });
+                  },
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
             ElevatedButton(
               onPressed:
                   (_itemController.text.isEmpty || _intController.text.isEmpty)

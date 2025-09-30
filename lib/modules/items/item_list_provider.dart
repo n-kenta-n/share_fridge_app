@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_fridge_app/modules/fridges/current_fridge_provider.dart';
 import 'package:share_fridge_app/modules/items/item.dart';
@@ -30,8 +31,10 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
 
     _currentPage = 1;
     _hasMore = true;
-    final items = await _repository.fetch(_currentPage, 10, fridgeId, sortType);
-    return items;
+    final items = await _repository.fetch(_currentPage, 14, fridgeId, sortType);
+    final signedUrlItems = await _repository.getSignedUrlItems(items);
+
+    return signedUrlItems;
   }
 
   Future<void> fetchNext() async {
@@ -46,7 +49,7 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
     _currentPage++;
     final newItems = await _repository.fetch(
       _currentPage,
-      10,
+      14,
       fridgeId,
       sortType,
     );
@@ -54,7 +57,8 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
     if (newItems.isEmpty) {
       _hasMore = false;
     } else {
-      state = AsyncData([...state.value ?? [], ...newItems]);
+      final newSignedUrlItems = await _repository.getSignedUrlItems(newItems);
+      state = AsyncData([...state.value ?? [], ...newSignedUrlItems]);
     }
     _isFetching = false;
   }
@@ -66,6 +70,7 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
     String? limitDate,
     User user,
     String fridgeId,
+    File? selectedImage,
   ) async {
     Item newItem = await ItemRepository().add(
       itemName,
@@ -74,9 +79,11 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
       limitDate,
       user,
       fridgeId,
-    ); // DBに追加
+      selectedImage,
+    );
+    final newSignedUrlItem = await _repository.getSignedUrlItem(newItem);
     final currentItems = state.value ?? [];
-    state = AsyncValue.data([newItem, ...currentItems]);
+    state = AsyncValue.data([newSignedUrlItem, ...currentItems]);
   }
 
   Future<void> removeItem(int itemId) async {
@@ -93,6 +100,8 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
     String newUnit,
     String? newLimitDate,
     User user,
+    String fridgeId,
+    File? selectedImage,
   ) async {
     // DB更新
     final updatedItem = await ItemRepository().update(
@@ -101,11 +110,19 @@ class ItemListNotifier extends AsyncNotifier<List<Item>> {
       newUnit,
       newLimitDate,
       user,
+      fridgeId,
+      selectedImage,
+    );
+
+    // サムネ画像を期限付きURLにする
+    final updatedSignedUrlItem = await _repository.getSignedUrlItem(
+      updatedItem,
     );
     final currentItems = state.value ?? [];
+
     final updatedItems =
         currentItems.map((item) {
-          return item.id == itemId ? updatedItem : item;
+          return item.id == itemId ? updatedSignedUrlItem : item;
         }).toList();
 
     state = AsyncValue.data(updatedItems);

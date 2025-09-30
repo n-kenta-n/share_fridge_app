@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 // ライトテーマ
 ThemeData lightTheme = ThemeData(
-  useMaterial3: true,
   colorScheme: const ColorScheme.light().copyWith(
     surface: Color(0xFFFFFFFF), // 基本の背景色
     onSurface: Colors.black, // テキストの色

@@ -1,11 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_fridge_app/modules/auth/current_user_provider.dart';
 import 'package:share_fridge_app/modules/items/item.dart';
-import 'package:share_fridge_app/widgets/keyboard_aware.dart';
 import 'package:intl/intl.dart';
+import '../modules/fridges/current_fridge_provider.dart';
 import '../modules/items/item_list_provider.dart';
+import '../widgets/pick_image_sheet.dart';
 
 class UpdateItemScreen extends ConsumerStatefulWidget {
   const UpdateItemScreen({super.key, required this.item});
@@ -27,6 +29,8 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
   SnackBar? mySnackBar;
   static List<String> unitList = <String>['個', 'ｇ', '㎖', 'パック'];
   String _unit = '';
+  File? _selectedImage;
+  bool _isImageCleared = false;
 
   @override
   void initState() {
@@ -100,14 +104,49 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
 
   void _updateItem() async {
     if (_amount <= 0) return;
-    final currentUser = ref.watch(currentUserProvider);
-    await ref
-        .read(itemListProvider.notifier)
-        .updateItem(widget.item.id, _amount, _unit, _limitDate, currentUser!);
-    setState(() {
-      _setDisplayDate();
-    });
-    _updateItemDialog(widget.item.itemName);
+
+    // 完了ダイアログが表示されるまでローディングダイアログを表示
+    showDialog(
+      context: context,
+      barrierDismissible: false, // タップで閉じられない
+      builder: (context) {
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+
+    try {
+      final currentUser = ref.watch(currentUserProvider);
+      final fridgeId = ref.read(currentFridgeProvider);
+      await ref
+          .read(itemListProvider.notifier)
+          .updateItem(
+            widget.item.id,
+            _amount,
+            _unit,
+            _limitDate,
+            currentUser!,
+            fridgeId!,
+            _selectedImage,
+          );
+
+      // 非同期処理の後にmountedを確認
+      // awaitで待っている間にStatefulWidgetが破棄される可能性があり
+      // 破棄された後にcontextを使うとクラッシュする恐れがある
+      if (!mounted) return;
+
+      setState(() {
+        _setDisplayDate();
+      });
+      // ローディングダイアログを閉じる
+      Navigator.of(context).pop();
+      _updateItemDialog(widget.item.itemName);
+    } catch (e) {
+      // 失敗時もローディングを閉じる
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('更新に失敗しました: $e')));
+    }
   }
 
   void _validation() {
@@ -146,16 +185,55 @@ class UpdateItemState extends ConsumerState<UpdateItemScreen> {
                 Navigator.of(context).pop();
               },
               icon: const Icon(Icons.close),
-              color: Colors.white,
             ),
           ],
         ),
       ),
-      body: KeyboardAware(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             // 余白
-            SizedBox(height: 20),
+            const SizedBox(height: 32),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: InkWell(
+                onTap: () async {
+                  final picked = await PickImageSheet.show(context);
+                  setState(() {
+                    _selectedImage = picked;
+                  });
+                },
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    child:
+                        _selectedImage != null
+                            ? Image.file(_selectedImage!)
+                            : (!_isImageCleared &&
+                                    widget.item.imageUrl != null &&
+                                    widget.item.imageUrl!.isNotEmpty
+                                ? Image.network(widget.item.imageUrl!)
+                                : const Center(child: Text('画像が選択されていません'))),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _selectedImage = null;
+                  _isImageCleared = true;
+                });
+              },
+              child: const Text('画像をクリア'),
+            ),
+            const SizedBox(height: 24),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
               // StatefulWidgetの場合、引数で渡された値を参照するにはwidgetを付ける

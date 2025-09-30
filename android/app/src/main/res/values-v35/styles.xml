@@ -16,5 +16,10 @@
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
     <!-- image_cropper対応 -->
-    <style name="Ucrop.CropTheme" parent="Theme.AppCompat.Light.NoActionBar" />
+    <style name="Ucrop.CropTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Android 15 の Edge-to-Edge 強制から除外 -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <!-- 任意：不透明にしておくと見た目が整う -->
+        <item name="android:statusBarColor">@android:color/black</item>
+    </style>
 </resources>

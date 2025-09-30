@@ -11,6 +11,16 @@ class AcceptBottomSheet extends ConsumerStatefulWidget {
 
   @override
   AcceptBottomSheetState createState() => AcceptBottomSheetState();
+
+  static void show(BuildContext context, Request request) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => AcceptBottomSheet(request: request),
+    );
+  }
 }
 
 class AcceptBottomSheetState extends ConsumerState<AcceptBottomSheet> {
@@ -33,12 +43,12 @@ class AcceptBottomSheetState extends ConsumerState<AcceptBottomSheet> {
 
     return Container(
       padding: EdgeInsets.all(16),
-      height: 300,
+      height: MediaQuery.of(context).size.height * 0.3,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('アクションを選択してください', style: textTheme.titleLarge),
-          SizedBox(height: 16),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
           RadioListTile<String>(
             title: Text('承認する'),
             value: 'accept',
@@ -59,7 +69,7 @@ class AcceptBottomSheetState extends ConsumerState<AcceptBottomSheet> {
               });
             },
           ),
-          SizedBox(height: 16),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

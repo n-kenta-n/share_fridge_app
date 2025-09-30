@@ -10,16 +10,6 @@ class ReceivedRequestCard extends StatelessWidget {
 
   final Request request;
 
-  void _showMyBottomSheet(BuildContext context, Request request) {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) => AcceptBottomSheet(request: request),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -28,19 +18,19 @@ class ReceivedRequestCard extends StatelessWidget {
       margin: const EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 6),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
         onTap: () {
-          _showMyBottomSheet(context, request);
+          AcceptBottomSheet.show(context, request);
         },
         child: Container(
-          padding: const EdgeInsets.all(7.5),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: const EdgeInsets.all(7),
+                padding: const EdgeInsets.all(8),
                 child:
                     (request.status == 'pending')
                         ? Text('承認待ち', style: textTheme.titleLarge)
@@ -49,7 +39,7 @@ class ReceivedRequestCard extends StatelessWidget {
                         : Text('否認済み', style: textTheme.titleLarge),
               ),
               Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 child: Text(
                   'from: ${request.fromUserName}',
                   style: textTheme.titleLarge,

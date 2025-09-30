@@ -12,6 +12,7 @@ abstract class Item with _$Item {
     required String unit,
     required DateTime? limitDate,
     required String fridgeId,
+    required String? imageUrl,
   }) = _Item;
 
   factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
